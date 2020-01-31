@@ -10,14 +10,14 @@ For this tutorial, you just need to be aware of:
 
 ## You will see how to:
 - Handle a [yarp::os::Bottle](http://www.yarp.it/classyarp_1_1os_1_1Bottle.html);
-- Read and write on [yarp::os::Port](http://www.yarp.it/classyarp_1_1os_1_1Port.html) and [yarp::os::BufferedPort](http://www.yarp.it/classyarp_1_1os_1_1BufferedPort.html); 
-- instantiate a yarp device
-- use IEncoder Motor Interfaces: [yarp::dev::IEncoders](http://www.yarp.it/classyarp_1_1dev_1_1IEncoders.html);
-- write a [yarp::sig::Image](http://www.yarp.it/classyarp_1_1sig_1_1Image.html) through a YARP port
-
+- Read and write on [yarp::os::Port](http://www.yarp.it/classyarp_1_1os_1_1Port.html) and [yarp::os::BufferedPort](http://www.yarp.it/classyarp_1_1os_1_1BufferedPort.html);
+- Use specialized [yarp::os::RpcServer](http://www.yarp.it/classyarp_1_1os_1_1RpcServer.html);
+- Instantiate a yarp device;
+- Use IEncoder Motor Interfaces: [yarp::dev::IEncoders](http://www.yarp.it/classyarp_1_1dev_1_1IEncoders.html);
+- Write a [yarp::sig::Image](http://www.yarp.it/classyarp_1_1sig_1_1Image.html) through a YARP port.
 
 ## Build and Install the code
-Follow these steps to build and properly install your module: 
+Follow these steps to build and properly install your module:
 ```
 $ cd tutorial_yarp-basics
 $ mkdir build; cd build
@@ -25,7 +25,7 @@ $ cmake ../
 $ make
 $ make install
 ```
-the `make install` will install your module (binary, xml files, etc) in the icub contrib folder which is already setup on your machine. 
+the `make install` will install your module (binary, xml files, etc) in the icub contrib folder which is already setup on your machine.
 
 ## Have fun with the tutorial
 
@@ -54,7 +54,7 @@ Terminal 5: start a yarpview to see the image being published
 $ yarpview
 ```
 
-Terminal 6: connect 
+Terminal 6: connect
 ```
 $ yarp connect /imagePort:o /yarpview/img:i
 ```
@@ -67,4 +67,3 @@ Available commands are:
 - `enc j`: the application will reply with the encoder position of the `j` joint of the robot
 - `send_image`: the application will send an image on port `/imagePort:o`
 - `quit`: the application will quit
-

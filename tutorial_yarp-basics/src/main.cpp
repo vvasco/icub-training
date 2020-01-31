@@ -23,14 +23,14 @@
 #include <opencv2/opencv.hpp>
 #include <opencv2/highgui/highgui.hpp>
 
+#include "src/yarpBasics_IDL.h"
+
 using namespace std;
 using namespace yarp::os;
 using namespace yarp::sig;
 
-class Module: public yarp::os::RFModule
+class Module: public yarp::os::RFModule, public yarpBasics_IDL
 {
-protected:
-
     // Parameters
     std::string moduleName;
     std::string robotName;
@@ -38,6 +38,7 @@ protected:
     // Ports
     yarp::os::Port commandPort;
     yarp::os::BufferedPort<yarp::sig::ImageOf<yarp::sig::PixelBgr> > imagePort;
+    yarp::os::RpcServer rpcPort;
 
     yarp::dev::PolyDriver robotDevice;
     // Interfaces can only be used as a pointer, they cannot be instatiated
@@ -46,8 +47,33 @@ protected:
     int nJnts;
     cv::Mat image;
 
-public:
+    /********************************************************/
+    bool attach(yarp::os::RpcServer &source)
+    {
+        return this->yarp().attachAsServer(source);
+    }
 
+    /********************************************************/
+    // Interface implementation of idl service
+    double get_enc(const int jnt) override
+    {
+        double enc = 0;
+        if (jnt >= nJnts)
+        {
+            yError() << "Head has" << nJnts << "joints";
+        }
+        else
+        {
+            yInfo() << "Reading joint" <<jnt;
+
+            // Read encoder values:
+            if(iencoders)
+                iencoders->getEncoder(jnt,&enc);
+        }
+        return enc;
+    }
+
+    /********************************************************/
     // Function called once at the startup.
     // Do all init configuration here
     bool configure(yarp::os::ResourceFinder &rf)
@@ -67,7 +93,7 @@ public:
         image = cv::imread(filePath.c_str(), CV_LOAD_IMAGE_COLOR);
         if(!image.data)
         {
-            yError() << "Error";
+            yError() << "Cannor open image";
             return false;
         }
 
@@ -81,7 +107,11 @@ public:
         }
 
         // opening port to publish image
-        imagePort.open("/imagePort:o");
+        imagePort.open("/" + moduleName + "/image:o");
+
+        // open and attach rpc port
+        rpcPort.open("/" + moduleName + "/rpc");
+        attach(rpcPort);
 
         // open the device driver to access the robot
         yarp::os::Property option;
@@ -104,11 +134,13 @@ public:
         return true;
     }
 
+    /********************************************************/
     double getPeriod()
     {
         return 0.5; // module periodicity (seconds)
     }
 
+    /********************************************************/
     bool updateModule()
     {
         // watchdog message
@@ -140,30 +172,7 @@ public:
             }
             else if(val.asString() == "enc")
             {
-                int jnt = 0;
-                if (b.size()>1)
-                    jnt = b.get(1).asInt();
-                double enc = 0;
 
-                if (jnt >= nJnts)
-                {
-                    yError() << "Head has" << nJnts << "joints";
-                    b.clear();
-                    b.addString("Head has " + to_string(nJnts) + " joints");
-                }
-                else
-                {
-                    yInfo() << "Reading joint" <<jnt;
-
-                    // Read encoder values:
-                    if(iencoders)
-                        iencoders->getEncoder(jnt,&enc);
-                    b.clear();
-                    b.addString("Joint " + to_string(jnt) + " position is:");
-                    b.addDouble(enc);
-                }
-
-                commandPort.write(b);
             }
             else if (val.asString() == "send_image")
             {
@@ -178,24 +187,31 @@ public:
         return true;
     }
 
+    /********************************************************/
     // Catch the CTRL+C and unlock any resources which may
     // hang on closure
     bool interruptModule()
     {
         // wake up port from read.
         commandPort.interrupt();
+        imagePort.interrupt();
+        rpcPort.interrupt();
         return true;
     }
 
+    /********************************************************/
     bool close()
     {
         yInfo()<<"closing module";
         commandPort.close();
+        imagePort.close();
+        rpcPort.close();
         return true;
     }
 
 };
 
+/********************************************************/
 int main(int argc, char * argv[])
 {
     Network yarp;

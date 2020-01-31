@@ -1,0 +1,23 @@
+<application>
+    <name>Tutorial yarp basics </name>
+
+    <dependencies>
+    </dependencies>
+
+    <module>
+        <name>yarp-basics</name>
+        <parameters>--robot icub</parameters>
+        <node>localhost</node>
+    </module>
+    <module>
+        <name>yarpview</name>
+        <node>localhost</node>
+        <parameters>--name /image --x 0 --y 0 --RefreshTime 33 </parameters>
+    </module>
+
+    <connection>
+        <from>/yarp-basics/image:o</from>
+        <to>/image</to>
+        <protocol>mjpeg</protocol>
+    </connection>
+</application>
