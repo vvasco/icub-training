@@ -33,6 +33,7 @@ protected:
 
     // Parameters
     std::string moduleName;
+    std::string robotName;
 
     // Ports
     yarp::os::Port commandPort;
@@ -53,9 +54,11 @@ public:
     {
         // let's get the module name
         moduleName = rf.check("name",yarp::os::Value("yarp-basics")).asString();
+        robotName = rf.check("robot",yarp::os::Value("icubSim")).asString();
 
         yInfo() << "Configuring the module with the following parameters: \n";
-        yInfo() << "name is" << moduleName << "\n";
+        yInfo() << "name is" << moduleName;
+        yInfo() << "robot is" << robotName << "\n";
 
         ResourceFinder r;
         r.setDefaultContext("tutorial_yarp-basics");
@@ -69,7 +72,7 @@ public:
         }
 
         // open all ports
-        string portName = "/" + moduleName;
+        std::string portName = "/" + moduleName;
         bool ret = commandPort.open(portName);
         if(!ret)
         {
@@ -83,7 +86,7 @@ public:
         // open the device driver to access the robot
         yarp::os::Property option;
         option.put("device", "remote_controlboard");
-        option.put("remote", "/icubSim/head"); // where we connect to
+        option.put("remote", "/" + robotName + "/head"); // where we connect to
         option.put("local",  "/" + moduleName + "/client"); // local name port
 
         if (!robotDevice.open(option))
