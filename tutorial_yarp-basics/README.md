@@ -34,10 +34,9 @@ Terminal 1: Start the yarp server if not already running
 $ yarpserver
 ```
 
-Terminal 2: run the tutorial executable. It requires an input parameter to run!!
-The parameter is the name of the port the executable will open. The parameter must be given in the form of `--name <portName>` where <portName> is a string of your choise. Remember, portname must start with `/` and cannot contain `@` charaters.
+Terminal 2: run the tutorial executable
 ```
-$ tutorial_yarp-basics  --name <portName>
+$ tutorial_yarp-basics
 ```
 
 Terminal 3: open a yarp port to send commands to the tutorial executable
@@ -65,9 +64,7 @@ In the yarp write terminal you are able to send command to the tutorial executab
 
 Available commands are:
 - any integer number: the application will reply with that number +1
-- `enc`: the application will reply with the encoder position of the first joint of the fake robot
+- `enc j`: the application will reply with the encoder position of the `j` joint of the robot
 - `send_image`: the application will send an image on port `/imagePort:o`
 - `quit`: the application will quit
-
-Once the tutorial executable has received the first command, you'll also see a dummy image being shown in the yarpview window.
 
