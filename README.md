@@ -1,6 +1,6 @@
 # icub-training
 
-[![Gitpod](https://gitpod.io/button/open-in-gitpod.svg)](https://github.com/vvasco/icub-training)
+[![Gitpod](https://gitpod.io/button/open-in-gitpod.svg)](https://gitpod.io/#https://github.com/vvasco/icub-training)
 
 ## yarp
 
