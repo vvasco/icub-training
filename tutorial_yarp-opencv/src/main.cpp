@@ -84,7 +84,7 @@ public:
         targetPort.open("/"+ moduleName + "/target:o");
 
         //magical values
-        lowBound.push_back(200);
+        lowBound.push_back(100);
         lowBound.push_back(0);
         lowBound.push_back(0);
         
@@ -158,9 +158,8 @@ public:
             // circle outline
             circle(in_cv, center, radius, cv::Scalar(0, 0, 255), 3, 8);
 
-            yarp::os::Bottle &t=outTargets.addList();
-            t.addDouble(center.x);
-            t.addDouble(center.y);
+            outTargets.addDouble(center.x);
+            outTargets.addDouble(center.y);
         }
         
         if (outTargets.size() > 0)

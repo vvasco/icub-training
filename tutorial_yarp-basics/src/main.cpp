@@ -48,7 +48,7 @@ class Module: public yarp::os::RFModule, public yarpBasics_IDL
     cv::Mat image;
 
     /********************************************************/
-    bool attach(yarp::os::RpcServer &source)
+    bool attach(yarp::os::RpcServer &source) override
     {
         return this->yarp().attachAsServer(source);
     }
@@ -76,7 +76,7 @@ class Module: public yarp::os::RFModule, public yarpBasics_IDL
     /********************************************************/
     // Function called once at the startup.
     // Do all init configuration here
-    bool configure(yarp::os::ResourceFinder &rf)
+    bool configure(yarp::os::ResourceFinder &rf) override
     {
         // let's get the module name
         moduleName = rf.check("name",yarp::os::Value("yarp-basics")).asString();
@@ -135,13 +135,13 @@ class Module: public yarp::os::RFModule, public yarpBasics_IDL
     }
 
     /********************************************************/
-    double getPeriod()
+    double getPeriod() override
     {
         return 0.5; // module periodicity (seconds)
     }
 
     /********************************************************/
-    bool updateModule()
+    bool updateModule() override
     {
         // watchdog message
         yInfo()<< moduleName << "running happily...";
@@ -190,7 +190,7 @@ class Module: public yarp::os::RFModule, public yarpBasics_IDL
     /********************************************************/
     // Catch the CTRL+C and unlock any resources which may
     // hang on closure
-    bool interruptModule()
+    bool interruptModule() override
     {
         // wake up port from read.
         commandPort.interrupt();
@@ -200,7 +200,7 @@ class Module: public yarp::os::RFModule, public yarpBasics_IDL
     }
 
     /********************************************************/
-    bool close()
+    bool close() override
     {
         yInfo()<<"closing module";
         commandPort.close();

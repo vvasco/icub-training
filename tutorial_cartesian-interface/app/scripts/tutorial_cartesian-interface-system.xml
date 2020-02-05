@@ -1,0 +1,33 @@
+<application>
+
+  <name>Tutorial on Cartesian Interface System</name>
+
+  <module>
+      <name>iCub_SIM</name>
+      <environment>YARP_FORWARD_LOG_ENABLE=1</environment>
+      <node>localhost</node>
+  </module>
+
+  <module>
+      <name>yarprobotinterface</name>
+      <parameters>--context simCartesianControl</parameters>
+      <environment>YARP_FORWARD_LOG_ENABLE=1</environment>
+      <node>localhost</node>
+  </module>
+
+  <module>
+      <name>iKinCartesianSolver</name>
+      <parameters>--context simCartesianControl --part left_arm</parameters>
+      <environment>YARP_FORWARD_LOG_ENABLE=1</environment>
+      <node>localhost</node>
+  </module>
+
+  <module>
+      <name>iKinGazeCtrl</name>
+      <parameters>--from configSim.ini</parameters>
+      <environment>YARP_FORWARD_LOG_ENABLE=1</environment>
+      <node>localhost</node>
+  </module>
+
+
+</application>

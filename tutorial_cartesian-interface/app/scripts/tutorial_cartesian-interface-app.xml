@@ -1,0 +1,98 @@
+<application>
+
+  <name>Tutorial on Cartesian Interface</name>
+
+  <module>
+      <name>yarp-opencv</name>
+      <environment>YARP_FORWARD_LOG_ENABLE=1</environment>
+      <parameters>--name detector/left</parameters>
+      <node>localhost</node>
+  </module>
+
+  <module>
+      <name>yarp-opencv</name>
+      <environment>YARP_FORWARD_LOG_ENABLE=1</environment>
+      <parameters>--name detector/right</parameters>
+      <node>localhost</node>
+  </module>
+
+  <module>
+      <name>tutorial_gaze-interface</name>
+      <environment>YARP_FORWARD_LOG_ENABLE=1</environment>
+      <node>localhost</node>
+  </module>
+
+  <module>
+      <name>tutorial_cartesian-interface</name>
+      <environment>YARP_FORWARD_LOG_ENABLE=1</environment>
+      <node>localhost</node>
+  </module>
+
+  <module>
+      <name>yarpview</name>
+      <parameters>--name /viewer/left --x 10 --y 10 --compact</parameters>
+      <node>localhost</node>
+  </module>
+
+  <module>
+      <name>yarpview</name>
+      <parameters>--name /viewer/right --x 360 --y 10 --compact</parameters>
+      <node>localhost</node>
+  </module>
+  
+    <module>
+      <name>yarpscope</name>
+      <parameters>--remote /controller/scope:o --x 720 --y 10
+                  --dx 100 --dx 1000 --min 50 --max 250
+                  --index "(0 1 2 3)" --color "(Blue Red Green Magenta)"
+                  --bgcolor White --interval 100 --size 50
+      </parameters>
+      <dependencies>
+          <port timeout="20">/controller/scope:o</port>
+      </dependencies>
+      <node>localhost</node>
+  </module>
+  
+  <connection>
+      <from>/icubSim/cam/left</from>
+      <to>/detector/left/image:i</to>
+      <protocol>udp</protocol>
+  </connection>
+  
+  <connection>
+      <from>/icubSim/cam/right</from>
+      <to>/detector/right/image:i</to>
+      <protocol>udp</protocol>
+  </connection>  
+  
+  <connection>
+      <from>/detector/left/image:o</from>
+      <to>/viewer/left</to>
+      <protocol>udp</protocol>
+  </connection> 
+
+  <connection>
+      <from>/detector/right/image:o</from>
+      <to>/viewer/right</to>
+      <protocol>udp</protocol>
+  </connection> 
+
+  <connection>
+    <from>/detector/left/target:o</from>
+    <to>/controller-gaze/target/left:i</to>
+    <protocol>tcp</protocol>
+  </connection>
+
+  <connection>
+    <from>/detector/right/target:o</from>
+    <to>/controller-gaze/target/right:i</to>
+    <protocol>tcp</protocol>
+  </connection>
+
+  <connection>
+    <from>/controller-gaze/target:o</from>
+    <to>/controller-cartesian/target:i</to>
+    <protocol>tcp</protocol>
+  </connection>
+
+</application>

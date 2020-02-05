@@ -5,8 +5,9 @@ cmake_minimum_required(VERSION 3.5)
 project(icub-training)
 
 # mandatory use of these packages
+find_package(ICUB REQUIRED)
 find_package(ICUBcontrib REQUIRED)
-find_package(YARP 3.1.100 REQUIRED os dev sig cv)
+find_package(YARP 3.1.100 REQUIRED os dev sig cv math)
 find_package(OpenCV REQUIRED)
 
 # extend the current search path used by cmake to load helpers
@@ -25,4 +26,5 @@ icubcontrib_add_uninstall_target()
 # add tutorial folders
 add_subdirectory(tutorial_yarp-basics)
 add_subdirectory(tutorial_yarp-opencv)
-# add_subdirectory(solution_control-pid)
+add_subdirectory(tutorial_gaze-interface)
+add_subdirectory(tutorial_cartesian-interface)
