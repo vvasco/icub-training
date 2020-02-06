@@ -26,5 +26,4 @@ icubcontrib_add_uninstall_target()
 # add tutorial folders
 add_subdirectory(tutorial_yarp-basics)
 add_subdirectory(tutorial_yarp-opencv)
-add_subdirectory(tutorial_gaze-interface)
-add_subdirectory(tutorial_cartesian-interface)
+add_subdirectory(tutorial_interface)

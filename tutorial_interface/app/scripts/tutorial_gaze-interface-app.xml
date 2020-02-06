@@ -17,7 +17,13 @@
   </module>
 
   <module>
-      <name>tutorial_control-gaze</name>
+      <name>tutorial_interface-mover</name>
+      <environment>YARP_FORWARD_LOG_ENABLE=1</environment>
+      <node>localhost</node>
+  </module>
+
+  <module>
+      <name>tutorial_interface-control-gaze</name>
       <environment>YARP_FORWARD_LOG_ENABLE=1</environment>
       <node>localhost</node>
   </module>

@@ -1,8 +1,9 @@
 #HSLIDE
 
 ### Robot vision tutorial with OpenCV
-### <span style="color:#e49436">Part Two</span>
----
+
+#HSLIDE
+
 #### YARP & OPENCV
 
 #HSLIDE
@@ -22,63 +23,74 @@
  - Modify the streamed image to <span style="color:#e49436">display</span> the <span style="color:#e49436">location</span> of the red and round object.
 
 #HSLIDE
-### Read an Image from a stream using port callback
+### Some Image Processing techniques
+@fa[arrow-down]
 
 #VSLIDE
-### Read an Image from a stream using port callback
 
-<!--######<div style="text-align: left;">Code </div> -->
-```c++
-class Module : public yarp::os::RFModule, public yarpOpencv_IDL
-{
-    ...
-```
-```c++
-class Processing : public yarp::os::BufferedPort<yarp::sig::ImageOf<yarp::sig::PixelRgb> >
-{
-bool open(){
-    this->useCallback();
-    BufferedPort<yarp::sig::ImageOf<yarp::sig::PixelRgb> >::open( "/" + moduleName + "/image:i" );
-    ...
-}
-void interrupt(){
-    BufferedPort<yarp::sig::ImageOf<yarp::sig::PixelRgb> >::interrupt();
-}
-void close()(){
-    BufferedPort<yarp::sig::ImageOf<yarp::sig::PixelRgb> >::close();
-}
-void onRead( yarp::sig::ImageOf<yarp::sig::PixelRgb> &img ){
-    cv::Mat in_cv = yarp::cv::toCvMat( img );
-}
-```
-#HSLIDE
-### Some Image Processing techniques
+@snap[north span-80]
+### Smoothing
+@img[](tutorial_yarp-opencv/images/smoothing.png)
+@snapend
+
+@snap[west span-40]
+@ul[list-spaced-bullets text-left text-07](false)
+- To reduce noise (high frequency content)
+- Gaussian filter most used:
+@ulend
+@snapend
+
+@snap[midpoint span-20 text-center text-06]
+@img[](tutorial_yarp-opencv/images/original.png)
+Before smoothing
+@snapend
+
+@snap[east span-20 text-center text-06]
+@img[](tutorial_yarp-opencv/images/blurred.png)
+After smoothing
+@snapend
 
 #VSLIDE
-### Some Image Processing techniques
-######<div style="text-align: left;">Spatial Filters </div>
-```c++
-cv::GaussianBlur(redBallOnly, redBallOnly, cv::Size(gausian_size, gausian_size), 2, 2);
+@snap[north span-100]
+### Morphological operations
+@snapend
 
-```
-######<div style="text-align: left;">Morphology </div>
-```c++
-cv::dilate(redBallOnly, redBallOnly, cv::Mat(), cv::Point(-1,-1), dilate_niter, cv::BORDER_CONSTANT, cv::morphologyDefaultBorderValue());
-```
----
-```c++
-cv::erode(redBallOnly, redBallOnly, cv::Mat(), cv::Point(-1,-1), erode_niter, cv::BORDER_CONSTANT, cv::morphologyDefaultBorderValue());
-```
-######<div style="text-align: left;">Detect Circles </div>
-```c++
-cv::HoughCircles(redBallOnly, circles, CV_HOUGH_GRADIENT, 1, redBallOnly.rows / 8, HIGH_THRESHOLD, HOUGH_MIN_VOTES, HOUGH_MIN_RADIUS, HOUGH_MAX_RADIUS);
-```
+@snap[west span-45 text-center]
+Dilation:
+@img[](tutorial_yarp-opencv/images/dilation.png)
+@snapend
+
+@snap[east span-45 text-center]
+Erosion:
+@img[](tutorial_yarp-opencv/images/erosion.png)
+@snapend
+
+#VSLIDE
+@snap[north text-left span-100]
+### Hough transform
+@ul[list-spaced-bullets text-07](false)
+- To find circles in the image:
+@ulend
+@snapend
+
+@snap[west span-45 text-center text-07]
+Fixed radius:
+@img[](tutorial_yarp-opencv/images/cht.png)
+@snapend
+
+@snap[east span-25 text-center text-07]
+Changing radius:
+@img[](tutorial_yarp-opencv/images/cht-radii.png)
+@snapend
 
 #HSLIDE
 ### Draw and display results
+@fa[arrow-down]
 
 #VSLIDE
 ### Draw and display results
+
+@snap[span-100 text-07]
 ```c++
 for (size_t i = 0; i < circles.size(); i++)
 {
@@ -94,6 +106,7 @@ for (size_t i = 0; i < circles.size(); i++)
     t.addDouble(center.y);
 }
 ```
+@snapend
 
 #HSLIDE
-The End :)
+Now let's code :)

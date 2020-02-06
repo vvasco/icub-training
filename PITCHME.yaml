@@ -1,0 +1,5 @@
+mathjax : TeX-AMS_HTML-full
+theme : moon
+footnote: iCub Training
+logo : assets/logo.png
+highlight: solarized-dark

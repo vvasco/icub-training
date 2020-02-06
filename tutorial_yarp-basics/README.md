@@ -1,3 +1,5 @@
+[![GitPitch](https://gitpitch.com/assets/badge.svg)](https://gitpitch.com/vvasco/icub-training/master?p=tutorial_yarp-basics)
+
 # YARP basics tutorial
 
 This tutorial shows some of the basic features of YARP, usually required when dealing with a robot :robot:
