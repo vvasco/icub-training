@@ -2,7 +2,7 @@
 cmake_minimum_required(VERSION 3.5)
 
 # produce the cmake var PROJECT_NAME
-project(yarp-basics)
+project(tutorial_yarp-basics)
 
 # add idl
 yarp_add_idl(IDL_GEN_FILES src/${PROJECT_NAME}.thrift)
@@ -18,5 +18,7 @@ install(TARGETS ${PROJECT_NAME} DESTINATION bin)
 
 file(GLOB resources ${CMAKE_SOURCE_DIR}/resources/*)
 yarp_install(FILES ${resources} DESTINATION ${ICUBCONTRIB_CONTEXTS_INSTALL_DIR}/${PROJECT_NAME})
+
+message( ${ICUBCONTRIB_CONTEXTS_INSTALL_DIR}/${PROJECT_NAME} )
 
 add_subdirectory(app)

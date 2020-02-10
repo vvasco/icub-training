@@ -1,11 +1,17 @@
 <application>
-    <name>Simple red ball detection </name>
+    <name>2_Tutorial red ball detection </name>
 
     <dependencies>
     </dependencies>
 
     <module>
-        <name>yarp-opencv</name>
+        <name>yarpdataplayer</name>
+        <environment>YARP_FORWARD_LOG_ENABLE=1</environment>
+        <node>localhost</node>
+    </module>
+    <module>
+        <name>tutorial_yarp-opencv</name>
+        <environment>YARP_FORWARD_LOG_ENABLE=1</environment>
         <node>localhost</node>
     </module>
     <module>
@@ -22,16 +28,16 @@
     <connection>
         <from>/icub/camcalib/left/out</from>
         <to>/yarp-opencv/image:i</to>
-        <protocol>tcp</protocol>
+        <protocol>fast_tcp</protocol>
     </connection>
     <connection>
         <from>/yarp-opencv/image:o</from>
         <to>/output</to>
-        <protocol>tcp</protocol>
+        <protocol>fast_tcp</protocol>
     </connection>
     <connection>
         <from>/yarp-opencv/mask:o</from>
         <to>/mask</to>
-        <protocol>tcp</protocol>
+        <protocol>fast_tcp</protocol>
     </connection>
 </application>

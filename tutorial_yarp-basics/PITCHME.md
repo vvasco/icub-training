@@ -13,9 +13,9 @@
 
 @snap[west]
 @ul[list-spaced-bullets text-08](false)
-- YARP is a <span style="color:#e49436">middleware</span>: 
+- YARP is a <span style="color:#e49436">middleware</span>:
 
-   - set of libraries, protocols, GUIs and tools 
+   - set of libraries, protocols, GUIs and tools
    - to develop of high level application for robots
    - focus on modularity, code re-usage, flexibility and hw/sw abstraction.
 @ulend
@@ -29,19 +29,19 @@
 
 @snap[west]
 @ul[list-spaced-bullets text-08](false)
-- YARP ports: 
+- YARP ports:
 
    - communication entry point
 - many clients can connect to a port
 - a single connection can use:
-  
+
   - different <span style="color:#e49436">protocols</span> and custom <span style="color:#e49436">carriers</span>
 - run on different operating systems
 @ulend
 @snapend
 
 @snap[east span-45]
-![IMAGE](tutorial_yarp-basics/resources/images-icub-training.png)
+![IMAGE](tutorial_yarp-basics/images/images-icub-training.png)
 @snapend
 
 #VSLIDE
@@ -52,25 +52,25 @@
 
 @snap[west]
 @ul[list-spaced-bullets text-08](false)
-- `yarp server` : 
-   
+- `yarp server` :
+
    - database of information about yarp network
-   
-- `yarp read /read` : 
-   
+
+- `yarp read /read` :
+
    - creates a read port
 - `yarp write /write /read` :
-   
+
    - creates a write port connected to the read port
 @ulend
 @snapend
 
 @snap[east span-45]
-![IMAGE](tutorial_yarp-basics/resources/yarp-server.png)
+![IMAGE](tutorial_yarp-basics/images/yarp-server.png)
 @snapend
 
 @snap[south span-50]
-![IMAGE](tutorial_yarp-basics/resources/write_read.png)
+![IMAGE](tutorial_yarp-basics/images/write_read.png)
 @snapend
 
 
@@ -118,7 +118,7 @@ class yarp::os::Value : public Portable
 #VSLIDE
 
 @snap[north]
-<span style="color:#e49436">`yarp::os::Property`</span> 
+<span style="color:#e49436">`yarp::os::Property`</span>
 @snapend
 
 @snap[text-left]
@@ -209,7 +209,7 @@ class yarp::os::Value : public Portable
 @ul[list-spaced-bullets text-06](false)
 - Synchronized communication sender/receivers.
 - Ports identified by their name:
-   
+
    - Names must be unique
    - Names must start with ‘/’ character
    - No ‘@’ character allowed
@@ -236,7 +236,7 @@ class yarp::os::Value : public Portable
 #VSLIDE
 
 @snap[north]
-<span style="color:#e49436"> `yarp::os::BufferedPort` </span> 
+<span style="color:#e49436"> `yarp::os::BufferedPort` </span>
 @snapend
 
 @snap[text-left]
@@ -399,7 +399,7 @@ class yarp::os::Value : public Portable
             ...
          }
          ...
-         
+
          bool respond(const Bottle& command, Bottle& reply)
          {
             cout<<"Got something, echo is on"<<endl;
@@ -410,7 +410,7 @@ class yarp::os::Value : public Portable
             return true;
          }
       }
-      
+
 ```
 @snapend
 
@@ -429,7 +429,7 @@ class yarp::os::Value : public Portable
 
 ```c++
    #demo.thrift
-   service Demo_IDL 
+   service Demo_IDL
    {
      i32 get_answer();
    }
@@ -465,12 +465,12 @@ class yarp::os::Value : public Portable
    {
       RpcServer rpc;
       ...
-      
+
       bool attach(RpcServer &source)
       {
          return this->yarp().attachAsServer(source);
       }
-      
+
       bool configure(ResourceFinder &rf)
       {
          rpcPort.open(“/myModule/rpc”);
@@ -530,7 +530,7 @@ class yarp::os::Value : public Portable
 @ul[list-spaced-bullets text-07](false)
 - devices opened through the special class <span style="color:#e49436">`PolyDriver`</span>
 - keyword `device` tells YARP which device we want to open
-- <span style="color:#e49436">`remote_controlboard`</span>: provides access to robot motor control 
+- <span style="color:#e49436">`remote_controlboard`</span>: provides access to robot motor control
 - required parameters:
 
   - remote port prefix: `remote`

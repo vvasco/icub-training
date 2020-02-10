@@ -86,9 +86,7 @@ class Module: public yarp::os::RFModule, public yarpBasics_IDL
         yInfo() << "name is" << moduleName;
         yInfo() << "robot is" << robotName << "\n";
 
-        ResourceFinder r;
-        r.setDefaultContext("tutorial_yarp-basics");
-        std::string filePath = r.findFileByName("programmersLife.bmp");
+        std::string filePath = rf.findFileByName("programmersLife.bmp");
 
         image = cv::imread(filePath.c_str(), CV_LOAD_IMAGE_COLOR);
         if(!image.data)
@@ -96,6 +94,7 @@ class Module: public yarp::os::RFModule, public yarpBasics_IDL
             yError() << "Cannor open image";
             return false;
         }
+        yInfo() << "Found image in" << filePath;
 
         // open all ports
         std::string portName = "/" + moduleName;
@@ -170,10 +169,6 @@ class Module: public yarp::os::RFModule, public yarpBasics_IDL
                 yInfo() << "Received quit command";
                 return false;
             }
-            else if(val.asString() == "enc")
-            {
-
-            }
             else if (val.asString() == "send_image")
             {
                 // Publish the image
@@ -224,8 +219,8 @@ int main(int argc, char * argv[])
 
     ResourceFinder rf;
     rf.configure(argc, argv);
-//     rf.setDefaultContext("tutorial_yarp-basic");
-//     rf.setVerbose(true);
+    rf.setDefaultContext("tutorial_yarp-basics");
+    rf.setVerbose(true);
 
     Module module;
     module.runModule(rf);

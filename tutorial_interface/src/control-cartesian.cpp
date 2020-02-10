@@ -19,6 +19,8 @@
 #include <yarp/dev/CartesianControl.h>
 #include <yarp/dev/PolyDriver.h>
 
+#include "src/controlCartesian_IDL.h"
+
 #define MAX_TORSO_PITCH     30.0    // [deg]
 
 using namespace std;
@@ -27,13 +29,15 @@ using namespace yarp::dev;
 using namespace yarp::sig;
 using namespace yarp::math;
 
-class CtrlThread: public PeriodicThread
+class CtrlThread: public PeriodicThread, public controlCartesian_IDL
 {
 protected:
     PolyDriver         clientCart;
     ICartesianControl *icart;
 
     BufferedPort<Bottle> targetIn;
+    BufferedPort<Bottle> portScope;
+    RpcServer portRpc;
 
     ResourceFinder *rf;
 
@@ -43,9 +47,50 @@ protected:
     Vector home_pos;
     Vector home_ori;
     int startup_context_id;
+    bool starting;
 
 public:
     CtrlThread() : PeriodicThread(1.0), rf(nullptr) { }
+
+    /********************************************************/
+    bool attach(yarp::os::RpcServer &source)
+    {
+        return this->yarp().attachAsServer(source);
+    }
+
+    /********************************************************/
+    bool stop_cartesian() override
+    {
+        // back to home position
+        yInfo()<<"Homing";
+        starting = false;
+        return icart->goToPoseSync(home_pos,home_ori);
+    }
+
+    /********************************************************/
+    bool start_cartesian() override
+    {
+        starting = true;
+        return true;
+    }
+
+    /********************************************************/
+    bool enable_torso(const int32_t pitch, const int32_t roll, const int32_t yaw) override
+    {
+        Vector newDof, curDof;
+        icart->getDOF(curDof);
+        newDof=curDof;
+        yInfo()<<"Current DoFs"<<newDof.toString();
+
+        // enable the torso yaw and pitch
+        // disable the torso roll
+        newDof[0]=pitch; // torso pitch
+        newDof[1]=roll; // torso roll
+        newDof[2]=yaw; // torso yaw
+
+        // send the request for dofs reconfiguration
+        return icart->setDOF(newDof,curDof);
+    }
 
     void setRF(ResourceFinder &rf)
     {
@@ -96,9 +141,9 @@ public:
 
         // enable the torso yaw and pitch
         // disable the torso roll
-        newDof[0]=1; // torso pitch
+        newDof[0]=0; // torso pitch
         newDof[1]=0; // torso roll
-        newDof[2]=1; // torso yaw
+        newDof[2]=0; // torso yaw
 
         // send the request for dofs reconfiguration
         icart->setDOF(newDof,curDof);
@@ -118,9 +163,14 @@ public:
 
         // open ports
         targetIn.open("/" + name + "/target:i");
+        portScope.open("/" + name + "/scope:o");
+        portRpc.open("/" + name + "/rpc");
+        attach(portRpc);
 
         xd.resize(3);
         od.resize(4);
+
+        starting = false;
 
         return true;
     }
@@ -136,30 +186,47 @@ public:
 
     void run() override
     {
-        Bottle *t=targetIn.read(false);
-        if (t!=nullptr)
+        if (starting)
         {
-            if (Bottle *pos=t->get(0).asList())
+            Bottle *t=targetIn.read(false);
+            if (t!=nullptr)
             {
-                if (pos->size()>=3)
+                if (Bottle *pos=t->get(0).asList())
                 {
-                    // we read the target position from the gaze
-                    xd[0]=pos->get(0).asDouble();
-                    xd[1]=pos->get(1).asDouble();
-                    xd[2]=pos->get(2).asDouble();
+                    if (pos->size()>=3)
+                    {
+                        // we read the target position from the gaze
+                        xd[0]=pos->get(0).asDouble();
+                        xd[1]=pos->get(1).asDouble();
+                        xd[2]=pos->get(2).asDouble()-0.1;
 
-                    // we keep the orientation of the arm constant:
-                    // we want the middle finger to point forward (end-effector x-axis)
-                    // with the palm turned down (end-effector y-axis points leftward);
-                    // to achieve that it is enough to rotate the root frame of pi around z-axis
-                    od[0]=0.0; od[1]=0.0; od[2]=1.0; od[3]=M_PI;
+                        // we keep the orientation of the arm constant:
+                        // we want the middle finger to point forward (end-effector x-axis)
+                        // with the palm turned down (end-effector y-axis points leftward);
+                        // to achieve that it is enough to rotate the root frame of pi around z-axis
+                        od[0]=0.0; od[1]=0.0; od[2]=1.0; od[3]=M_PI;
 
-                    // go to the target :)
-                    // (in streaming)
-                    icart->goToPose(xd,od);
+                        // go to the target :)
+                        // (in streaming)
+                        icart->goToPose(xd,od);
 
-                    // some verbosity
-                    printStatus();
+                        // some verbosity
+                        Vector x,o;
+                        printStatus(x,o);
+
+                        // send information to yarpscope
+                        Bottle &scope=portScope.prepare();
+                        scope.clear();
+                        scope.addDouble(xd[0]);
+                        scope.addDouble(x[0]);
+                        scope.addDouble(xd[1]);
+                        scope.addDouble(x[1]);
+                        scope.addDouble(xd[2]);
+                        scope.addDouble(x[2]);
+                        scope.addDouble(od[3]*(180.0/M_PI));
+                        scope.addDouble(o[3]*(180.0/M_PI));
+                        portScope.write();
+                    }
                 }
             }
         }
@@ -167,10 +234,8 @@ public:
 
     void threadRelease() override
     {
-        // go home
-        yInfo()<<"Homing";
-        icart->goToPoseSync(home_pos,home_ori);
-        yInfo()<<"Homed";
+        // we go back to home position
+        stop_cartesian();
 
         // we require an immediate stop
         // before closing the client for safety reason
@@ -183,6 +248,8 @@ public:
         clientCart.close();
 
         targetIn.close();
+        portScope.close();
+        portRpc.close();
     }
 
     void limitTorsoPitch()
@@ -200,9 +267,9 @@ public:
         icart->setLimits(axis,min,MAX_TORSO_PITCH);
     }
 
-    void printStatus()
+    void printStatus(Vector &x, Vector &o)
     {
-        Vector x,o,xdhat,odhat,qdhat;
+        Vector xdhat,odhat,qdhat;
 
         // we get the current arm pose in the
         // operational space

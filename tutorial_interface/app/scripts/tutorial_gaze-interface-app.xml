@@ -1,16 +1,16 @@
 <application>
 
-  <name>Tutorial on Gaze Interface</name>
+  <name>3_Tutorial on Gaze Interface</name>
 
   <module>
-      <name>yarp-opencv</name>
+      <name>tutorial_yarp-opencv</name>
       <environment>YARP_FORWARD_LOG_ENABLE=1</environment>
       <parameters>--name detector/left</parameters>
       <node>localhost</node>
   </module>
 
   <module>
-      <name>yarp-opencv</name>
+      <name>tutorial_yarp-opencv</name>
       <environment>YARP_FORWARD_LOG_ENABLE=1</environment>
       <parameters>--name detector/right</parameters>
       <node>localhost</node>
@@ -42,13 +42,9 @@
   
     <module>
       <name>yarpscope</name>
-      <parameters>--remote /controller/scope:o --x 720 --y 10
-                  --dx 100 --dx 1000 --min 50 --max 250
-                  --index "(0 1 2 3)" --color "(Blue Red Green Magenta)"
-                  --bgcolor White --interval 100 --size 50
-      </parameters>
+      <parameters>--x 720 --y 10 --dx 100 --dx 1000 --context tutorial_interface --xml scope-gaze.xml</parameters>
       <dependencies>
-          <port timeout="20">/controller/scope:o</port>
+          <port timeout="20">/controller-gaze/scope:o</port>
       </dependencies>
       <node>localhost</node>
   </module>
@@ -56,37 +52,37 @@
   <connection>
       <from>/icubSim/cam/left</from>
       <to>/detector/left/image:i</to>
-      <protocol>udp</protocol>
+      <protocol>fast_tcp</protocol>
   </connection>
   
   <connection>
       <from>/icubSim/cam/right</from>
       <to>/detector/right/image:i</to>
-      <protocol>udp</protocol>
+      <protocol>fast_tcp</protocol>
   </connection>  
   
   <connection>
       <from>/detector/left/image:o</from>
       <to>/viewer/left</to>
-      <protocol>udp</protocol>
+      <protocol>fast_tcp</protocol>
   </connection> 
 
   <connection>
       <from>/detector/right/image:o</from>
       <to>/viewer/right</to>
-      <protocol>udp</protocol>
+      <protocol>fast_tcp</protocol>
   </connection> 
 
   <connection>
     <from>/detector/left/target:o</from>
     <to>/controller-gaze/target/left:i</to>
-    <protocol>tcp</protocol>
+    <protocol>fast_tcp</protocol>
   </connection>
 
   <connection>
     <from>/detector/right/target:o</from>
     <to>/controller-gaze/target/right:i</to>
-    <protocol>tcp</protocol>
+    <protocol>fast_tcp</protocol>
   </connection>
 
 </application>

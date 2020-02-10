@@ -1,15 +1,27 @@
 <application>
 
-  <name>Tutorial on Cartesian Interface System</name>
+  <name>0_Tutorial System</name>
+
+  <module>
+      <name>yarplogger</name>
+      <parameters>--start</parameters>
+      <node>localhost</node>
+  </module>
 
   <module>
       <name>iCub_SIM</name>
+      <dependencies>
+         <port timeout="20">/yarplogger</port>
+      </dependencies>
       <environment>YARP_FORWARD_LOG_ENABLE=1</environment>
       <node>localhost</node>
   </module>
 
   <module>
       <name>yarprobotinterface</name>
+      <dependencies>
+         <port timeout="40">/robotDescription/rpc</port>
+      </dependencies>
       <parameters>--context simCartesianControl</parameters>
       <environment>YARP_FORWARD_LOG_ENABLE=1</environment>
       <node>localhost</node>
@@ -17,6 +29,9 @@
 
   <module>
       <name>iKinCartesianSolver</name>
+      <dependencies>
+         <port timeout="40">/robotDescription/rpc</port>
+      </dependencies>
       <parameters>--context simCartesianControl --part left_arm</parameters>
       <environment>YARP_FORWARD_LOG_ENABLE=1</environment>
       <node>localhost</node>
@@ -24,6 +39,9 @@
 
   <module>
       <name>iKinGazeCtrl</name>
+      <dependencies>
+         <port timeout="40">/robotDescription/rpc</port>
+      </dependencies>
       <parameters>--from configSim.ini</parameters>
       <environment>YARP_FORWARD_LOG_ENABLE=1</environment>
       <node>localhost</node>

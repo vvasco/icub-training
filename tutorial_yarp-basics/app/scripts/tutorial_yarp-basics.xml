@@ -1,12 +1,12 @@
 <application>
-    <name>Tutorial yarp basics </name>
+    <name>1_Tutorial yarp basics </name>
 
     <dependencies>
     </dependencies>
 
     <module>
-        <name>yarp-basics</name>
-        <parameters>--robot icub</parameters>
+        <name>tutorial_yarp-basics</name>
+        <environment>YARP_FORWARD_LOG_ENABLE=1</environment>
         <node>localhost</node>
     </module>
     <module>
@@ -18,6 +18,6 @@
     <connection>
         <from>/yarp-basics/image:o</from>
         <to>/image</to>
-        <protocol>mjpeg</protocol>
+        <protocol>fast_tcp</protocol>
     </connection>
 </application>

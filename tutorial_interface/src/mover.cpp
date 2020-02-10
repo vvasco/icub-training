@@ -153,7 +153,7 @@ public:
 
     double getPeriod() override
     {
-        return 0.02;
+        return 0.1;
     }
 
     bool updateModule() override

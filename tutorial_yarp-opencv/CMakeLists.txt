@@ -3,7 +3,7 @@
 # CopyPolicy: Released under the terms of the GNU GPL v2.0.
 
 cmake_minimum_required(VERSION 3.5)
-project(yarp-opencv)
+project(tutorial_yarp-opencv)
 
 yarp_add_idl(IDL_GEN_FILES src/${PROJECT_NAME}.thrift)
 set(idl src/${PROJECT_NAME}.thrift)

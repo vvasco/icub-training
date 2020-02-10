@@ -27,3 +27,6 @@ icubcontrib_add_uninstall_target()
 add_subdirectory(tutorial_yarp-basics)
 add_subdirectory(tutorial_yarp-opencv)
 add_subdirectory(tutorial_interface)
+
+# add app folder
+add_subdirectory(app)

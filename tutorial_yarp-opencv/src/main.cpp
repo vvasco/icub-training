@@ -117,8 +117,13 @@ public:
     /********************************************************/
     void onRead( yarp::sig::ImageOf<yarp::sig::PixelRgb> &img )
     {
+        // out image with detected ball
         yarp::sig::ImageOf<yarp::sig::PixelRgb> &outImage  = outPort.prepare();
+
+        // out image with mask
         yarp::sig::ImageOf<yarp::sig::PixelMono> &outEdges = edgesPort.prepare();
+
+        // out bottle with ball center
         yarp::os::Bottle &outTargets = targetPort.prepare();
 
         outImage.resize(img.width(), img.height());
@@ -126,11 +131,13 @@ public:
 
         outEdges.zero();
 
+        // we convert yarp image to cv::Mat object to use opencv functions
         cv::Mat in_cv = yarp::cv::toCvMat(outImage);
         outImage = img;
 
         cv::Mat redBallOnly = yarp::cv::toCvMat(outEdges);
         
+        // image processing
         mtx.lock();
         cv::inRange(in_cv, cv::Scalar(lowBound[0], lowBound[1], lowBound[2]), cv::Scalar(highBound[0], highBound[1], highBound[2]), redBallOnly);
 
@@ -141,6 +148,7 @@ public:
         cv::erode(redBallOnly, redBallOnly, cv::Mat(), cv::Point(-1,-1), erode_niter, cv::BORDER_CONSTANT, cv::morphologyDefaultBorderValue());
         mtx.unlock();
         
+        // find circles
         std::vector<cv::Vec3f> circles;
         cv::HoughCircles(redBallOnly, circles, CV_HOUGH_GRADIENT, 1, redBallOnly.rows / 8, HIGH_THRESHOLD, HOUGH_MIN_VOTES, HOUGH_MIN_RADIUS, HOUGH_MAX_RADIUS);
 
@@ -148,7 +156,7 @@ public:
 
         outTargets.clear();
 
-        // Draw the circles detected
+        // draw the circles detected
         for (size_t i = 0; i < circles.size(); i++)
         {
             cv::Point center(cvRound(circles[i][0]), cvRound(circles[i][1]));
@@ -370,7 +378,8 @@ public:
     }
 
     /**********************************************************/
-    bool quit(){
+    bool quit()
+    {
         closing = true;
         return true;
     }
