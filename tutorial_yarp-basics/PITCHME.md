@@ -160,7 +160,7 @@ class yarp::os::Value : public Portable
 
 ```c++
     Bottle bot;
-    void clear();
+    bot.clear();
 
     bot.addInt(5);
     bot.addString("hello");
@@ -193,6 +193,57 @@ class yarp::os::Value : public Portable
     PixelRgb  rgb;
     rgb = yarpImage.pixel(10, 20);
 ```
+
+#HSLIDE
+
+#### The Resource Finder
+@fa[arrow-down]
+
+#VSLIDE
+
+@snap[north]
+<span style="color:#e49436">`yarp::os::ResourceFinder`</span>
+@snapend
+
+@snap[text-left]
+@ul[list-spaced-bullets text-07](false)
+ - to find config files and external resources:
+@ulend
+@snapend
+
+@snap[text-left text-07 span-100]
+``` c++
+    class MyModule: public RFModule
+    {
+      public:
+        bool configure(ResourceFinder &rf)  // module configuration
+        { return true; }
+
+        double getPeriod()               // define period in seconds
+        { return 1.0; }
+
+        bool updateModule() // code that will be executed every “getPeriod” seconds
+        { return true; }
+
+        bool interruptModule() // catch CTRL+C
+        {  return true; }
+
+        bool close() // at shutdown cleanup, close ports, delete memory
+        { return true; }
+    };
+
+    MyModule module;
+    ResourceFinder rf;
+    rf.configure(argc, argv);
+    module.runModule(rf);
+```
+@snapend
+
+@[20-23]
+@[4-5]
+@[10-11]
+@[13-14]
+@[16-17]
 
 #HSLIDE
 
@@ -274,12 +325,31 @@ class yarp::os::Value : public Portable
 
 @snap[text-left]
 @ul[list-spaced-bullets text-07](false)
-- by default <span style="color:#e49436">`BufferedPort`</span> drops old messages.
+- by default <span style="color:#e49436">`BufferedPort`</span> drops old messages:
+   
+   - if the `write()` is called too quickly;
+   - between subsequent calls of `read()`. 
+@ulend
+@snapend
+
+@snap[text-left]
+@ul[list-spaced-bullets span-100 text-06](false) 
+- `writeStrict()`: waits for pending transmissions to be finished before writing new data;
+- `setStrict()`: waits for received message. 
 @ulend
 @snapend
 
 @snap[text-left text-07 span-100]
 ```c++
+    BufferedPort<Bottle> p;
+    p.open("/out");
+    while (true)
+    {
+      Bottle& b = p.prepare();
+      // Generate data.
+      p.writeStrict();    // wait for previous pending write to complete
+    }
+    
     BufferedPort<Bottle> p;
     p.open("/in");
     p.setStrict(true);    // received messages are queued and never dropped
@@ -288,14 +358,6 @@ class yarp::os::Value : public Portable
       Bottle *b = p.read();
     }
 
-    BufferedPort<Bottle> p;
-    p.open("/out");
-    while (true)
-    {
-      Bottle& b = p.prepare();
-      // Generate data.
-      p.write(true); //wait for previous pending write to complete
-    }
 ```
 @snapend
 
@@ -326,53 +388,6 @@ class yarp::os::Value : public Portable
    p.open("/in");
 
 ```
-
-#VSLIDE
-
-@snap[north]
-<span style="color:#e49436">`yarp::os::ResourceFinder`</span>
-@snapend
-
-@snap[text-left]
-@ul[list-spaced-bullets text-07](false)
- - to find config files and external resources:
-@ulend
-@snapend
-
-@snap[text-left text-07 span-100]
-``` c++
-    class MyModule: public RFModule
-    {
-      public:
-        bool configure(ResourceFinder &rf)  // module configuration
-        { return true; }
-
-        double getPeriod()               // define period in seconds
-        { return 1.0; }
-
-        bool updateModule() // code that will be executed every “getPeriod” seconds
-        { return true; }
-
-        bool interruptModule() // catch CTRL+C
-        {  return true; }
-
-        bool close() // at shutdown cleanup, close ports, delete memory
-        { return true; }
-    };
-
-    MyModule module;
-    ResourceFinder rf;
-    rf.configure(argc, argv);
-    module.runModule(rf);
-```
-@snapend
-
-@[20-23]
-@[4-5]
-@[10-11]
-@[13-14]
-@[16-17]
-
 
 #VSLIDE
 
@@ -488,8 +503,22 @@ class yarp::os::Value : public Portable
 
 #HSLIDE
 
-#### Interfaces
+#### Motor Interfaces
 @fa[arrow-down]
+
+#VSLIDE
+
+@snap[north]
+#### Interfaces
+@snapend
+
+@snap[text-left]
+@ul[list-spaced-bullets text-07](false)
+- <span style="color:#e49436">`IEncoders`</span>: get access to encoders values;
+- <span style="color:#e49436">`IPositionControl`</span>: position controller;
+- <span style="color:#e49436">`IVelocityControl`</span>: velocity controller.
+@ulend
+@snapend
 
 #VSLIDE
 
@@ -571,6 +600,8 @@ class yarp::os::Value : public Portable
       posControl->positionMove(0,0);         // move joint back to position 0
 ```
 @snapend
+
+
 
 #HSLIDE
 Now let's code :)

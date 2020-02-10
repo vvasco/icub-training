@@ -1,4 +1,15 @@
 #HSLIDE
+### Kinematics
+@fa[arrow-down]
+#VSLIDE
+
+@snap[north]
+### Joint VS Cartesian space
+@snapend
+
+![IMAGE](tutorial_interface/images/kinematics.jpg)
+
+#HSLIDE
 
 ### The Cartesian Interface
 @fa[arrow-down]
@@ -8,6 +19,10 @@
 @snap[north]
 ### The Cartesian Controller
 @snapend
+
+@ul[list-spaced-bullets text-08](false)
+- Control the robot's arms directly in the  <span style="color:#e49436">Cartesian</span> space.
+@ulend
 
 ![IMAGE](tutorial_interface/images/cartesian-controller.png)
 
@@ -67,7 +82,6 @@
 @fa[arrow-down]
 
 @snap[south-east]
-@size[smaller]([@fa[arrow-left]](https://github.com/vvasco/icub-training))
 @snapend
 
 #VSLIDE
@@ -95,6 +109,25 @@ Yet another Cartesian Controller
 @snap[east span-65]
 ![IMAGE](tutorial_interface/images/table-head.png)
 @snapend
+
+#HSLIDE
+@snap[north]
+### iCub Frame Root
+@snapend
+
+@snap[west span-45]
+![IMAGE](tutorial_interface/images/robot-reference-frame.jpg)
+@snapend
+
+@snap[east span-45]
+@ul[list-spaced-bullets text-center text-04](false)
+- red: x-axis
+- green: y-axis
+- blue: z-axis
+@ulend
+![IMAGE](tutorial_interface/images/LeftHandCADRefFrame.jpg)
+@snapend
+
 
 #HSLIDE
 Now let's code :)

@@ -21,6 +21,44 @@
  - Use some <span style="color:#e49436">image processing</span> techniques to make things easier.
  - Display it: <span style="color:#e49436">stream</span> it through a <span style="color:#e49436">yarp port</span> to a <span style="color:#e49436">yarpviewer</span>.
  - Modify the streamed image to <span style="color:#e49436">display</span> the <span style="color:#e49436">location</span> of the red and round object.
+ 
+#HSLIDE
+### YARP & OPENCV
+@fa[arrow-down]
+
+#VSLIDE
+
+@snap[north]
+#### YARP & OPENCV
+@snapend
+
+@snap[text-left]
+@ul[list-spaced-bullets text-07](false)
+- Convert yarp image to <span style="color:#e49436">`cv::Mat`</span>:
+@ulend
+@snapend
+
+@snap[span-100 text-07]
+```c++
+cv::Mat in_cv = yarp::cv::toCvMat(outImage);
+```
+@snapend
+
+@snap[text-left]
+@ul[list-spaced-bullets text-07](false)
+- Apply opencv functions:
+@ulend
+@snapend
+
+@snap[span-100 text-07]
+```c++
+cv::GaussianBlur(redBallOnly, redBallOnly, cv::Size(gausian_size, gausian_size), 2, 2);
+
+cv::dilate(redBallOnly, redBallOnly, cv::Mat(), cv::Point(-1,-1), dilate_niter, cv::BORDER_CONSTANT, cv::morphologyDefaultBorderValue());
+        
+cv::erode(redBallOnly, redBallOnly, cv::Mat(), cv::Point(-1,-1), erode_niter, cv::BORDER_CONSTANT, cv::morphologyDefaultBorderValue());
+```
+@snapend
 
 #HSLIDE
 ### Some Image Processing techniques
@@ -57,29 +95,30 @@ After smoothing
 
 @snap[west span-45 text-center]
 Dilation:
+@img[](tutorial_yarp-opencv/images/dilation.gif)
 @img[](tutorial_yarp-opencv/images/dilation.png)
 @snapend
 
 @snap[east span-45 text-center]
 Erosion:
+@img[](tutorial_yarp-opencv/images/erosion.gif)
 @img[](tutorial_yarp-opencv/images/erosion.png)
 @snapend
 
 #VSLIDE
 @snap[north text-left span-100]
-### Hough transform
-@ul[list-spaced-bullets text-07](false)
-- To find circles in the image:
-@ulend
+### Circular Hough transform
 @snapend
 
 @snap[west span-45 text-center text-07]
-Fixed radius:
+One circle with fixed radius:
 @img[](tutorial_yarp-opencv/images/cht.png)
+More circles with fixed radius:
+@img[](tutorial_yarp-opencv/images/cht-morecircles.png)
 @snapend
 
 @snap[east span-25 text-center text-07]
-Changing radius:
+Unknown radius:
 @img[](tutorial_yarp-opencv/images/cht-radii.png)
 @snapend
 

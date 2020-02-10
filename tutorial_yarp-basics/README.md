@@ -18,17 +18,6 @@ For this tutorial, you just need to be aware of:
 - Use IEncoder Motor Interfaces: [yarp::dev::IEncoders](http://www.yarp.it/classyarp_1_1dev_1_1IEncoders.html);
 - Write a [yarp::sig::Image](http://www.yarp.it/classyarp_1_1sig_1_1Image.html) through a YARP port.
 
-## Build and Install the code
-Follow these steps to build and properly install your module:
-```
-$ cd tutorial_yarp-basics
-$ mkdir build; cd build
-$ cmake ../
-$ make
-$ make install
-```
-the `make install` will install your module (binary, xml files, etc) in the icub contrib folder which is already setup on your machine.
-
 ## Have fun with the tutorial
 
 Terminal 1: Start the yarp server if not already running
